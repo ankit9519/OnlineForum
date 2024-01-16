@@ -1,9 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../controllers/authController');
-const { validateRegistration, validateLogin } = require('../validators/userValidator');
+const authController = require("../controllers/authController");
+const {
+  validateRegistration,
+  validateLogin,
+} = require("../validators/userValidator");
 
-router.post('/register', validateRegistration, authController.register);
-router.post('/login', validateLogin, authController.login);
+// Route to handle user registration
+router.post("/register", validateRegistration, authController.register);
 
-module.exports = router;
+// Route to handle user login
+router.post("/login", validateLogin, authController.login);
+
+module.exports = router; // Export the authentication routes

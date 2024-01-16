@@ -4,19 +4,30 @@ import { useNavigate } from 'react-router-dom';
 import { postQuestion } from '../../redux/actions/questionActions';
 import { FaQuestion } from 'react-icons/fa';
 
+// CreateQuestionPage component for creating a new question
 const CreateQuestionPage = () => {
+    // State to manage form data
     const [questionData, setQuestionData] = useState({
         title: '',
         content: '',
     });
+
+    // Redux dispatch function
     const dispatch = useDispatch();
+
+    // React Router hook for navigation
     const navigate = useNavigate();
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Dispatch postQuestion action with questionData
             const response = await dispatch(postQuestion(questionData));
+
+            // Check if the response contains a valid question ID
             if (response && response._id) {
+                // Navigate to the newly created question page
                 navigate(`/questions/${response._id}`);
             } else {
                 console.error('Failed to create question. Response:', response);
@@ -26,7 +37,9 @@ const CreateQuestionPage = () => {
         }
     };
 
+    // Handle form input changes
     const handleChange = (e) => {
+        // Update questionData state with the changed input values
         setQuestionData({ ...questionData, [e.target.name]: e.target.value });
     };
 
@@ -40,6 +53,7 @@ const CreateQuestionPage = () => {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
+                            {/* Input for question title */}
                             <label htmlFor="title" className="sr-only">Title</label>
                             <input
                                 id="title"
@@ -54,6 +68,7 @@ const CreateQuestionPage = () => {
                             />
                         </div>
                         <div>
+                            {/* Textarea for question content */}
                             <label htmlFor="content" className="sr-only">Content</label>
                             <textarea
                                 id="content"
@@ -68,6 +83,7 @@ const CreateQuestionPage = () => {
                         </div>
                     </div>
                     <div>
+                        {/* Submit button */}
                         <button
                             type="submit"
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

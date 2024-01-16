@@ -5,12 +5,14 @@ import PropTypes from 'prop-types';
 import { FaSignInAlt, FaEnvelope, FaLock, FaSpinner } from 'react-icons/fa';
 import { loginUser } from '../../redux/actions/authActions';
 
+// Spinner component to display loading animation
 const Spinner = () => (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <FaSpinner className="animate-spin text-6xl text-white" />
     </div>
 );
 
+// ErrorModal component to display error messages
 const ErrorModal = ({ errorMessage, onClose }) => (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white p-4 rounded-lg shadow-lg">
@@ -28,27 +30,36 @@ ErrorModal.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
+// LoginPage component for user authentication
 const LoginPage = () => {
+    // State variables
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Redux state and dispatch function
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const dispatch = useDispatch();
+
+    // React Router hook for navigation
     const navigate = useNavigate();
 
+    // useEffect to redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/');
         }
     }, [isAuthenticated, navigate]);
 
+    // Event handler for input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Event handler for form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -63,18 +74,23 @@ const LoginPage = () => {
             console.log('Entered password does not match the password in the database');
         }
 
+        // Dispatch loginUser action to handle authentication
         dispatch(loginUser(formData))
             .then(() => {
                 setIsLoading(false);
             })
             .catch(err => {
                 console.log('Login error:', err);
-                setError(err.response?.data?.message || 'Invalid credentialsor user does not exist.');
+                setError(err.response?.data?.message || 'Invalid credentials or user does not exist.');
                 setIsLoading(false);
             });
-    }; const handleCloseErrorModal = () => {
+    };
+
+    // Event handler to close the error modal
+    const handleCloseErrorModal = () => {
         setError('');
     };
+
     return (
         <div className="container mx-auto px-4 h-screen flex items-start justify-center mt-20">
             <div className="max-w-md w-full bg-gray-700 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
@@ -83,6 +99,7 @@ const LoginPage = () => {
                     <h1 className="text-3xl font-semibold text-white">Login</h1>
                 </div>
                 <form onSubmit={handleSubmit}>
+                    {/* Email input */}
                     <div className="mb-4 flex items-center border-b border-gray-500 py-2">
                         <FaEnvelope className="text-gray-300 mr-3" />
                         <input
@@ -95,6 +112,7 @@ const LoginPage = () => {
                             required
                         />
                     </div>
+                    {/* Password input */}
                     <div className="mb-6 flex items-center border-b border-gray-500 py-2">
                         <FaLock className="text-gray-300 mr-3" />
                         <input
@@ -107,6 +125,7 @@ const LoginPage = () => {
                             required
                         />
                     </div>
+                    {/* Submit button */}
                     <div className="flex items-center justify-between">
                         <button
                             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -117,7 +136,9 @@ const LoginPage = () => {
                         </button>
                     </div>
                 </form>
+                {/* Display Spinner while loading */}
                 {isLoading && <Spinner />}
+                {/* Display ErrorModal if there is an error */}
                 {error && <ErrorModal errorMessage={error} onClose={handleCloseErrorModal} />}
             </div>
         </div>

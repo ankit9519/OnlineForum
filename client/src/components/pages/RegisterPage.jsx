@@ -1,44 +1,67 @@
+// React and Redux imports
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaUserPlus, FaEnvelope, FaLock, FaUser, FaGraduationCap, FaBriefcase, FaList, FaSpinner } from 'react-icons/fa';
+
+// React-icons for displaying icons
+import {
+    FaUserPlus,
+    FaEnvelope,
+    FaLock,
+    FaUser,
+    FaGraduationCap,
+    FaBriefcase,
+    FaList,
+    FaSpinner,
+} from 'react-icons/fa';
+
+// Auth action imports
 import { registerUser, loginUser } from '../../redux/actions/authActions';
 
+// Spinner component for loading state
 const Spinner = () => (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
         <FaSpinner className="animate-spin text-6xl text-blue-500" />
     </div>
 );
 
+// RegisterPage component
 const RegisterPage = () => {
+    // Local state for form data and loading state
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         password: '',
         education: '',
         employment: '',
-        interests: ''
+        interests: '',
     });
     const [isLoading, setIsLoading] = useState(false);
+
+    // Redux setup
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isAuthenticated, error } = useSelector((state) => state.auth);
 
+    // Redirect to home page if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/');
         }
     }, [isAuthenticated, navigate]);
 
+    // Handle form input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
+            // Dispatch registration action and log in if successful
             const registrationResponse = await dispatch(registerUser(formData));
             if (registrationResponse) {
                 await dispatch(loginUser({ email: formData.email, password: formData.password }));
@@ -51,10 +74,15 @@ const RegisterPage = () => {
         }
     };
 
+    // JSX structure for rendering the component
     return (
         <div className="container mx-auto px-4 h-screen flex items-center justify-center">
             {isLoading && <Spinner />}
-            <div className={`max-w-md w-full bg-gray-700 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 ${isLoading ? 'opacity-50' : ''}`}>
+            {/* Registration form */}
+            <div
+                className={`max-w-md w-full bg-gray-700 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 ${isLoading ? 'opacity-50' : ''
+                    }`}
+            >
                 <div className="text-center mb-6">
                     <FaUserPlus className="mx-auto text-6xl text-blue-400" />
                     <h1 className="text-3xl font-semibold text-white">Register</h1>
@@ -157,6 +185,7 @@ const RegisterPage = () => {
                         </button>
                     </div>
                 </form>
+                {/* Display registration error, if any */}
                 {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
             </div>
         </div>
